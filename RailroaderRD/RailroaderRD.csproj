@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <!--<ImplicitUsings>enable</ImplicitUsings>-->
+    <LangVersion>9.0</LangVersion>
+    <!--<Nullable>enable</Nullable> -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="Railroader.Modding">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Railroader\Railroader_Data\Managed\Railroader.Modding.dll</HintPath>
+    </Reference>
+    <Reference Include="Railroader">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Railroader\Railroader_Data\Managed\Railroader.dll</HintPath>
+    </Reference>
+    <Reference Include="KeyValue">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Railroader\Railroader_Data\Managed\KeyValue.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Railroader\Railroader_Data\Managed\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.InputSystem">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Railroader\Railroader_Data\Managed\Unity.InputSystem.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Railroader\Railroader_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Railroader\Railroader_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="PIEHid64Net">
+      <HintPath>PIEHid64Net.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Lib.Harmony" Version="2.4.3" />
+  </ItemGroup>
+</Project>
