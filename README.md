@@ -4,6 +4,8 @@ This mod adds support for the Raildriver controller in Railroader for the experi
 
 # Installation
 
+[Download from Nexusmods](https://www.nexusmods.com/railroader/mods/2078)
+
 There is an optional dependency on the [ModSettingsHub](https://github.com/Exp232/ModSettingsHub) mod. If you have it installed, you'll be able to use the universal mod settings window to calibrate as described below. If not, you will need to use the Ctrl+F7 hotkey to bring up the calibration window.
 
 Make sure your version of Railroader is at least 0.6 or later. Currently, 0.6 is an experimental build and to enable it, you need to go to your game properties in Steam, click the Betas tab, then select the appropriate build.
