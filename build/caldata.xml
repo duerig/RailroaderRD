@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CalibrationData xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ReverserMin>63</ReverserMin>
+  <ReverserCenter>120</ReverserCenter>
+  <ReverserMax>210</ReverserMax>
+  <ThrottleMin>62</ThrottleMin>
+  <ThrottleCenter>171</ThrottleCenter>
+  <ThrottleMax>209</ThrottleMax>
+  <AutoBrakeMin>73</AutoBrakeMin>
+  <AutoBrakeEmg>92</AutoBrakeEmg>
+  <AutoBrakeMax>184</AutoBrakeMax>
+  <IndBrakeMin>59</IndBrakeMin>
+  <IndBrakeMax>184</IndBrakeMax>
+  <BailOffMin>202</BailOffMin>
+  <BailOffMax>210</BailOffMax>
+  <WiperMin>102</WiperMin>
+  <WiperCenter>127</WiperCenter>
+  <WiperMax>171</WiperMax>
+  <LightsMin>80</LightsMin>
+  <LightsCenter>128</LightsCenter>
+  <LightsMax>161</LightsMax>
+</CalibrationData>

@@ -133,15 +133,16 @@ namespace RailroaderRD
             builder.AddSlider(() => raildriver.BailOff, () => "", (x) => { }, 0.0f, 1.0f);
             builder.Spacer(20);
 
-            builder.AddLabel("Enable (top-right rotary) -- Off = left, On = right");
+            builder.AddLabel("Front Lights (top-right rotary) -- Off = left, Dim = middle, Full = right");
             builder.HStack(delegate (UIPanelBuilder hstack) {
                 hstack.AddButtonCompact("Off", () => { raildriver.CalibrationData.WiperMin = raildriver.RawWipers; SaveConfig(); });
-                hstack.AddButtonCompact("On", () => { raildriver.CalibrationData.WiperMax = raildriver.RawWipers; SaveConfig(); });
+                hstack.AddButtonCompact("Dim", () => { raildriver.CalibrationData.WiperCenter = raildriver.RawWipers; SaveConfig(); });
+                hstack.AddButtonCompact("Full", () => { raildriver.CalibrationData.WiperMax = raildriver.RawWipers; SaveConfig(); });
             });
             builder.AddSlider(() => raildriver.Wipers, () => "", (x) => { }, 0.0f, 1.0f);
             builder.Spacer(20);
 
-            builder.AddLabel("Lights (bottom-right rotary) -- Off = left, Dim = middle, Full = right");
+            builder.AddLabel("Rear Lights (bottom-right rotary) -- Off = left, Dim = middle, Full = right");
             builder.HStack(delegate (UIPanelBuilder hstack) {
                 hstack.AddButtonCompact("Off", () => { raildriver.CalibrationData.LightsMin = raildriver.RawLights; SaveConfig(); });
                 hstack.AddButtonCompact("Dim", () => { raildriver.CalibrationData.LightsCenter = raildriver.RawLights; SaveConfig(); });
@@ -152,6 +153,7 @@ namespace RailroaderRD
 
             builder.AddTitle("Other Controls", null);
             builder.AddLabel("Left tall switch for whistle");
+            builder.AddLabel("Switch to left of whistle for quill horn");
             builder.AddLabel("Bottom-right button on left panel to toggle bell");
        }
     }
@@ -162,6 +164,8 @@ namespace RailroaderRD
         public RaildriverInterface input;
         private ButtonMask prevMask = 0;
         private int arity = 0;
+        private float reverser = 0.0f;
+        private float throttle = 0.0f;
         private float indBrake = 0.0f;
         private float trainBrake = 0.0f;
         static AccessTools.FieldRef<AutoEngineerPlanner, Orders> _ordersRef = AccessTools.FieldRefAccess<AutoEngineerPlanner, Orders>("_orders");
@@ -205,12 +209,12 @@ namespace RailroaderRD
                     if (controller != null && controller.SelectedLocomotive is BaseLocomotive loco)
                     {
                         bool ignore_input = false;
-                        if (raildriver.Wipers < 0.7)
-                        {
-                            raildriver.UpdateDisplay("OFF");
-                            ignore_input = true;
-                        }
-                        else if (controller.SelectedLocomotive.AutoEngineerPlanner != null)
+                        // if (raildriver.Wipers < 0.7)
+                        // {
+                        //     raildriver.UpdateDisplay("OFF");
+                        //     ignore_input = true;
+                        // }
+                        if (controller.SelectedLocomotive.AutoEngineerPlanner != null)
                         {
                             Orders orders = _ordersRef(controller.SelectedLocomotive.AutoEngineerPlanner);
                             if(orders.Enabled == true)
@@ -223,14 +227,18 @@ namespace RailroaderRD
                         if (!ignore_input)
                         {
                             raildriver.UpdateVelocityDisplay(Math.Abs(loco.velocity));
+                            reverser += -raildriver.Reverser;
+                            throttle += raildriver.Throttle;
                             trainBrake += 1.0f - raildriver.AutoBrake;
                             indBrake += 1.0f - raildriver.IndBrake;
                             if (arity % 10 == 0)
                             {
-                                loco.ControlHelper.Reverser = -raildriver.Reverser;
-                                loco.ControlHelper.Throttle = deaden(raildriver.Throttle);
+                                loco.ControlHelper.Reverser = reverser / 10.0f;
+                                loco.ControlHelper.Throttle = deaden(throttle / 10.0f);
                                 loco.ControlHelper.TrainBrake = deaden(trainBrake / 10.0f);
                                 loco.ControlHelper.LocomotiveBrake = deaden(indBrake / 10.0f);
+                                reverser = 0.0f;
+                                throttle = 0.0f;
                                 trainBrake = 0.0f;
                                 indBrake = 0.0f;
                             }
@@ -238,8 +246,9 @@ namespace RailroaderRD
                             if (raildriver.BailOff > 0.7f)
                                 loco.ControlHelper.BailOff();
 
-                            int headlight = (int)Math.Round(raildriver.Lights * 2.0f);
-                            int bits = HeadlightStateLogic.IntFromStates((HeadlightController.State)headlight, (HeadlightController.State)headlight);
+                            int headlight = (int)Math.Round(raildriver.Wipers * 2.0f);
+                            int taillight = (int)Math.Round(raildriver.Lights * 2.0f);
+                            int bits = HeadlightStateLogic.IntFromStates((HeadlightController.State)headlight, (HeadlightController.State)taillight);
                             if (bits != GetValue(loco, PropertyChange.Control.Headlight).IntValue)
                             {
                                 ChangeValue(loco, PropertyChange.Control.Headlight, bits);
@@ -254,10 +263,14 @@ namespace RailroaderRD
                             }
 
                             float whistle = 0.0f;
-                            if (downMask.HasFlag(ButtonMask.WhistleUp))
-                                whistle += 1.0f;
-                            if (downMask.HasFlag(ButtonMask.WhistleDown))
-                                whistle += 0.5f;
+                            if (downMask.HasFlag(ButtonMask.EStopDown) || downMask.HasFlag(ButtonMask.EStopUp))
+                            {
+                                whistle = 0.33f;
+                            }
+                            if (downMask.HasFlag(ButtonMask.WhistleUp) || downMask.HasFlag(ButtonMask.WhistleDown))
+                            {
+                                whistle = 1.0f;
+                            }
 
                             loco.ControlHelper.Horn = whistle;
 

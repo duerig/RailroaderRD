@@ -133,6 +133,7 @@ namespace RailroaderRD
         public byte BailOffMax = 0xff;
 
         public byte WiperMin = 0x00;
+        public byte WiperCenter = 0x7f;
         public byte WiperMax = 0xff;
 
         public byte LightsMin = 0x00;
@@ -257,10 +258,22 @@ namespace RailroaderRD
         {
             get
             {
-                if (CalibrationData.WiperMin == CalibrationData.WiperMax)
+                // if (CalibrationData.WiperMin == CalibrationData.WiperMax)
+                //     return 0.0f;
+
+                // return Clamp((float)(RawWipers - CalibrationData.WiperMin) / (float)(CalibrationData.WiperMax - CalibrationData.WiperMin));
+
+                if (CalibrationData.WiperMin == CalibrationData.WiperCenter || CalibrationData.WiperCenter == CalibrationData.WiperMax)
                     return 0.0f;
 
-                return Clamp((float)(RawWipers - CalibrationData.WiperMin) / (float)(CalibrationData.WiperMax - CalibrationData.WiperMin));
+                if (RawWipers < CalibrationData.WiperCenter)
+                {
+                    return Clamp((float)(RawWipers - CalibrationData.WiperMin) / (float)(CalibrationData.WiperCenter - CalibrationData.WiperMin)) * 0.5f;
+                }
+                else
+                {
+                    return Clamp((float)(RawWipers - CalibrationData.WiperCenter) / (float)(CalibrationData.WiperMax - CalibrationData.WiperCenter)) * 0.5f + 0.5f;
+                }
             }
         }
 
