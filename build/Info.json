@@ -1,6 +1,6 @@
 {
     "identifier": "duerig/rrrd",
-    "version": "1.0",
+    "version": "1.1",
     "name": "Railroader Raildriver Support",
     "assemblies": ["RailroaderRD.dll"],
     "dependencies": {

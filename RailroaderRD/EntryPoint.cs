@@ -45,7 +45,7 @@ namespace RailroaderRD
             XmlSerializer serializer = new XmlSerializer(typeof(CalibrationData));
             FileStream fs = new FileStream(savepath, FileMode.Open);
             raildriver.CalibrationData = (CalibrationData) serializer.Deserialize(fs);
-            HubLink.Register("duerig/rrrd", "Railroader Raildriver Support", "1.0", CalibrationMenu);
+            HubLink.Register("duerig/rrrd", "Railroader Raildriver Support", "1.1", CalibrationMenu);
             HubFallback.Enable("duerig/rrrd", "Railroader Raildriver Support", CalibrationMenu, "<Keyboard>/f7", ctrl: true);
         }
 
@@ -255,24 +255,29 @@ namespace RailroaderRD
                             }
 
                             ButtonMask downMask = raildriver.Buttons;
-                            ButtonMask pressed = downMask & (downMask ^ prevMask);
+                            ButtonMask changed = downMask ^ prevMask;
+                            ButtonMask pressed = downMask & changed;
 
                             if (pressed.HasFlag(ButtonMask.Bell))
                             {
                                 loco.ControlHelper.Bell = !loco.ControlHelper.Bell;
                             }
 
-                            float whistle = 0.0f;
-                            if (downMask.HasFlag(ButtonMask.EStopDown) || downMask.HasFlag(ButtonMask.EStopUp))
+                            if (changed.HasFlag(ButtonMask.EStopDown) || changed.HasFlag(ButtonMask.EStopUp) ||
+                                changed.HasFlag(ButtonMask.WhistleDown) || changed.HasFlag(ButtonMask.WhistleUp))
                             {
-                                whistle = 0.33f;
-                            }
-                            if (downMask.HasFlag(ButtonMask.WhistleUp) || downMask.HasFlag(ButtonMask.WhistleDown))
-                            {
-                                whistle = 1.0f;
-                            }
+                                float whistle = 0.0f;
+                                if (downMask.HasFlag(ButtonMask.EStopDown) || downMask.HasFlag(ButtonMask.EStopUp))
+                                {
+                                    whistle = 0.33f;
+                                }
+                                if (downMask.HasFlag(ButtonMask.WhistleUp) || downMask.HasFlag(ButtonMask.WhistleDown))
+                                {
+                                    whistle = 1.0f;
+                                }
 
-                            loco.ControlHelper.Horn = whistle;
+                                loco.ControlHelper.Horn = whistle;
+                            }
 
                             prevMask = downMask;
                         }
